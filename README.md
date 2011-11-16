@@ -12,7 +12,8 @@
     jQuery("#tag_container").tags({
        field: "tags1",                //field为保存tags的input(hidden)的name
        fieldId: "tags1",              //field为保存tags的input(hidden)的id
-       tags: ["北京","上海","南京"]     //tags为预设标签
+       tags: ["北京","上海","南京"],    //tags为热门标签
+       has: ["美丽","幸福"]            //has为已经存在的标签
     });
 
 您可以通过jQuery.mTags获取添加的标签，或者通过jQuery("#tags1")获取

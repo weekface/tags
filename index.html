@@ -30,7 +30,8 @@
                      * 2, jQuery("#tag_container").tags({
                      *       field: "tags1",                //field为保存tags的input(hidden)的name
                      *       fieldId: "tags1",              //field为保存tags的input(hidden)的id
-                     *       tags: ["北京","上海","南京"]     //tags为预设标签
+                     *       tags: ["北京","上海","南京"],    //tags为热门标签
+                     *       has: ["美丽","幸福"]            //has为已经存在的标签
                      *    });
                      *
                      * 3, 您可以通过jQuery.mTags获取添加的标签，或者通过jQuery("#tags1")获取
@@ -43,7 +44,8 @@
                             field: "tags",
                             fieldId: "tags",
                             hot_tag: "hot_tag",
-                            tags: []
+                            tags: [],
+                            has: []
                         };
                         $.mTags = new Array();
                         var options = $.extend(defaults, options)
@@ -52,7 +54,8 @@
                         ,hot_tag = options["hot_tag"]
                         ,field = options["field"]
                         ,fieldId = options["fieldId"]
-                        ,tags = options["tags"];
+                        ,tags = options["tags"]
+                        ,has = options["has"];
 
                         function initial(){
                             var tagp = "";
@@ -66,17 +69,26 @@
                             self.append(tagp);
                             var tt = "";
                             tt += "<div>";
-                            tt += '<p>在此添加标签，使用逗号或空格分隔</p>';
+                            if(!(has.length>0)){
+                                tt += '<p>在此添加标签，使用逗号或空格分隔</p>';
+                            }
                             tt += '<input id="tag_input" />';
                             tt += '</div>';
                             self.append(tt);
                             if(field != undefined){
                                 self.append('<input type="hidden" id="'+fieldId+'" name="'+field+'" />')
                             }
+                            if(has.length>0){
+                                for(var i=0;i<has.length;i++){
+                                    mDisplay(has[i]);
+                                }
+                            }
                         }
                         initial();
                         function mRemove(arr, dx){
-                            if(isNaN(dx)||dx>arr.length){return false;}
+                            if(isNaN(dx)||dx>arr.length){
+                                return false;
+                            }
                             arr.splice(dx,1);
                         }
                         function mInclude(arr, item){
@@ -99,7 +111,7 @@
                         function mAssign(){
                             $("#"+field).val($.mTags.join(','));
                         }
-                        
+
                         function mBindClick(){
                             $("#"+container+" div span a").unbind("click").click(function(){
                                 var t = $(this).parent().find("span").html();
@@ -113,12 +125,21 @@
                         function mCreateTagSpan(text){
                             var span = '<span deleteable="true" class="tag">';
                             span += '<span>'+text+'</span>';
-                            span += '<a title="删除" href="javascript:;">×</a>';
+                            span += '<a title="删除" href="javascript:;"> ×</a>';
                             span += '</span>';
                             return span;
                         }
                         function mClearInput(){
                             $('#'+container+' div input').val('');
+                        }
+                        function mDisplay(text){
+                            var span = mCreateTagSpan(text);
+                            $.mTags.push(text);
+                            $("#"+container+" div input").before(span).val('');
+                            mBindClick();
+                            mAssign();
+                            mClearInput();
+                            mFucusInput();
                         }
                         function mAddTag(boo){
                             var text = $("#"+input).val();
@@ -128,13 +149,7 @@
                                 if(text == ""){
                                     return;
                                 } else if(!(mInclude($.mTags, text))){
-                                    var span = mCreateTagSpan(text);
-                                    $.mTags.push(text);
-                                    $("#"+container+" div input").before(span).val('');
-                                    mBindClick();
-                                    mAssign();
-                                    mClearInput();
-                                    mFucusInput();
+                                    mDisplay(text);
                                 } else {
                                     alert('标签不能重复.');
                                     return;
@@ -181,7 +196,8 @@
                 jQuery("#tag_container").tags({
                     field: "tags1",
                     fieldId: "tags1",
-                    tags: ["北京","上海","南京"]
+                    tags: ["北京","上海","南京"],
+                    has: ["美丽", "哥们样儿"]
                 });
             });
 
