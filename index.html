@@ -1,0 +1,190 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>jQuery plugin: Tags</title>
+        <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <link rel="stylesheet" href="tags.css" />
+    </head>
+    <body>
+        <div id="tag_container" class="ggTagContainer"></div>
+        <script type="text/javascript">
+            $(document).ready(function(){
+                (function($){
+                    /*
+                     * tags 1.0
+                     * Copyright (c) 2011 WeekFace http://weekface.github.com/
+                     * Date: 2011-11-15
+                     * Email: weekface@gmail.com
+                     * 使用tags可以方便地为您的系统添加很酷的标签添加效果
+                     *
+                     * USAGE:
+                     *
+                     * 1, 首先在需要添加的地方放入一个div:
+                     *    <div id="tag_container" class="ggTagContainer"></div>
+                     *    其中id可以随意起名，比如是:tag_container.
+                     *    但是class必须是ggTagContainer
+                     *
+                     *    并且引入tags.css文件
+                     *
+                     * 2, jQuery("#tag_container").tags({
+                     *       field: "tags1",                //field为保存tags的input(hidden)的name
+                     *       fieldId: "tags1",              //field为保存tags的input(hidden)的id
+                     *       tags: ["北京","上海","南京"]     //tags为预设标签
+                     *    });
+                     *
+                     * 3, 您可以通过jQuery.mTags获取添加的标签，或者通过jQuery("#tags1")获取
+                     */
+                    $.fn.tags = function(options){
+                        var self = $(this);
+                        var defaults = {
+                            container: $(this).attr("id"),
+                            input: "tag_input",
+                            field: "tags",
+                            fieldId: "tags",
+                            hot_tag: "hot_tag",
+                            tags: []
+                        };
+                        $.mTags = new Array();
+                        var options = $.extend(defaults, options)
+                        ,container = options["container"]
+                        ,input = options["input"]
+                        ,hot_tag = options["hot_tag"]
+                        ,field = options["field"]
+                        ,fieldId = options["fieldId"]
+                        ,tags = options["tags"];
+
+                        function initial(){
+                            var tagp = "";
+                            if(tags.length>0){
+                                tagp += '<p class="list">';
+                                for(var i = 0;i<tags.length;i++){
+                                    tagp += '<span class="hot_tag">'+tags[i]+'</span>';
+                                }
+                                tagp + "</p>";
+                            }
+                            self.append(tagp);
+                            var tt = "";
+                            tt += "<div>";
+                            tt += '<p>在此添加标签，使用逗号或空格分隔</p>';
+                            tt += '<input id="tag_input" />';
+                            tt += '</div>';
+                            self.append(tt);
+                            if(field != undefined){
+                                self.append('<input type="hidden" id="'+fieldId+'" name="'+field+'" />')
+                            }
+                        }
+                        initial();
+                        function mRemove(arr, dx){
+                            if(isNaN(dx)||dx>arr.length){return false;}
+                            arr.splice(dx,1);
+                        }
+                        function mInclude(arr, item){
+                            for(var i=0;i<arr.length;i++){
+                                if(arr[i] == item){
+                                    return true
+                                }
+                            }
+                            return false;
+                        }
+                        function mRemoveStr(str){
+                            str = str.replace(/\s+/g,'');
+                            str = str.replace(/,/g,'');
+                            str = str.replace(/，/g,'');
+                            return str;
+                        }
+                        function mFucusInput(){
+                            $("#"+container+" div input").focus();
+                        }
+                        function mAssign(){
+                            $("#"+field).val($.mTags.join(','));
+                        }
+                        
+                        function mBindClick(){
+                            $("#"+container+" div span a").unbind("click").click(function(){
+                                var t = $(this).parent().find("span").html();
+                                $(this).parent().remove();
+                                var index = $.mTags.indexOf(t);
+                                mRemove($.mTags, index);
+                                mAssign();
+                                mFucusInput();
+                            });
+                        }
+                        function mCreateTagSpan(text){
+                            var span = '<span deleteable="true" class="tag">';
+                            span += '<span>'+text+'</span>';
+                            span += '<a title="删除" href="javascript:;">×</a>';
+                            span += '</span>';
+                            return span;
+                        }
+                        function mClearInput(){
+                            $('#'+container+' div input').val('');
+                        }
+                        function mAddTag(boo){
+                            var text = $("#"+input).val();
+                            var last = text.split('')[text.length-1];
+                            if(boo || last == " " || last == " " || last == "," || last == "，"){
+                                text = mRemoveStr(text);
+                                if(text == ""){
+                                    return;
+                                } else if(!(mInclude($.mTags, text))){
+                                    var span = mCreateTagSpan(text);
+                                    $.mTags.push(text);
+                                    $("#"+container+" div input").before(span).val('');
+                                    mBindClick();
+                                    mAssign();
+                                    mClearInput();
+                                    mFucusInput();
+                                } else {
+                                    alert('标签不能重复.');
+                                    return;
+                                }
+                            }
+                        }
+                        function mCreateTag(event, that){
+                            var code = event.keyCode;
+                            //if(parseInt(code) == 32){ //空格
+                            //if(parseInt(code) == 8){  //回格
+                            //if(parseInt(code) == 188){  //逗号
+                            if(parseInt(code) == 8){
+                                if(that.val() == ""){
+                                    var dom = $("#"+input).prevAll("span").first();
+                                    dom.remove();
+                                    $.mTags.pop();
+                                    mAssign();
+                                    mFucusInput();
+                                } else {
+                                    return;
+                                }
+                            } else if (parseInt(code) == 32 || parseInt(code) == 188){
+                                mAddTag(false);
+                            }
+                        }
+
+                        $("#"+container).click(function(){
+                            $("#"+container+" div").find("p").remove();
+                            mFucusInput();
+                        });
+                        $("#"+container+" div input").die().live("keyup",function(event){
+                            mCreateTag(event, $(this));
+                        }).live("blur",function(event){
+                            mAddTag(true);
+                        });
+                        $("."+hot_tag).click(function(){
+                            $('#'+container+' div input').val($(this).html()+" ");
+                            $("#"+container+" div").find("p").remove();
+                            mAddTag(false);
+                        });
+                    }
+                })(jQuery);
+
+                jQuery("#tag_container").tags({
+                    field: "tags1",
+                    fieldId: "tags1",
+                    tags: ["北京","上海","南京"]
+                });
+            });
+
+        </script>
+    </body>
+</html>

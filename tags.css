@@ -1,0 +1,49 @@
+.ggTagContainer div {
+    border: 1px solid #CCCCCC;
+    border-radius: 3px 3px 3px 3px;
+    color: #808080;
+    height:60px;
+    width:397px;
+    padding: 5px;
+}
+.ggTagContainer div p{
+    color: #999999;
+    font-size: 13px;
+    line-height: 19px;
+    margin: 0;
+    text-align: left;
+    padding:5px;
+}
+.ggTagContainer p.list .hot_tag {
+    color: green;
+    text-decoration: underline;
+    margin-right: 5px;
+    cursor: pointer;
+}
+.ggTagContainer div .tag {
+    background: none repeat scroll 0 0 #B7E498;
+    border: 1px solid #A9D789;
+    border-radius: 2px 2px 2px 2px;
+    color: #000000;
+    float: left;
+    height: 22px;
+    line-height: 22px;
+    margin: 0 5px 5px 0;
+    overflow: hidden;
+    padding: 0 5px 0 5px;
+    position: relative;
+    white-space: nowrap;
+}
+.ggTagContainer div .tag a {
+    cursor: pointer;
+    overflow: hidden;
+    color: red;
+    text-decoration: none;
+    font-size: 13px;
+}
+.ggTagContainer div #tag_input {
+    width:80px;
+    border:0;
+    border-radius: 0;
+    box-shadow:0px 0px 0px;
+}
