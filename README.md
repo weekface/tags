@@ -3,13 +3,13 @@
 
 ### 首先在需要添加的地方放入一个div:
 
-其中id可以随意起名，比如是:tag_container.但是class必须是ggTagContainer
+class必须是ggTagContainer
 
-    <div id="tag_container" class="ggTagContainer"></div>
+    <div class="ggTagContainer"></div>
 
 调用:
 
-    jQuery("#tag_container").tags({
+    jQuery(".ggTagContainer").tags({
        field: "tags1",                //field为保存tags的input(hidden)的name
        fieldId: "tags1",              //field为保存tags的input(hidden)的id
        tags: ["北京","上海","南京"],    //tags为热门标签
